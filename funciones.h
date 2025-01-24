@@ -22,4 +22,5 @@ void calcular_promedios(Zona zonas[], int num_zonas, float promedios[]);
 void predecir_niveles(Zona zonas[], int num_zonas, float predicciones[]);
 void emitir_alertas_y_recomendaciones(Zona zonas[], int num_zonas, float predicciones[]);
 void guardar_datos_a_archivo(Zona zonas[], int num_zonas, float promedios[], float predicciones[]);
+void editar_datos_historicos(Zona *zona);
 #endif

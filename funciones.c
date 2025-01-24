@@ -3,24 +3,25 @@
 #include <string.h>
 #include "funciones.h"
 
-// Función para calcular la contaminación del aire con la fórmula de Quito
 float calcular_contaminacion(float co2, float so2, float no2, float pm25) {
     return (co2 / LIMITE_CO2 + so2 / LIMITE_SO2 + no2 / LIMITE_NO2 + pm25 / LIMITE_PM25) * 25.0;
 }
 
 void ingresar_niveles_actuales(Zona zonas[], int num_zonas) {
     for (int i = 0; i < num_zonas; i++) {
-        printf("Ingrese los niveles actuales de contaminación para la zona %s (CO2, SO2, NO2, PM2.5): ", zonas[i].nombre);
+        printf("\nZona: %s\n", zonas[i].nombre); // Imprime el nombre de la zona.
+        printf("Ingrese los niveles actuales de contaminación (CO2, SO2, NO2, PM2.5): ");
         for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
             scanf("%f", &zonas[i].nivel_actual[j]);
         }
-        // Calcular contaminación actual con la fórmula de Quito
         zonas[i].contaminacion_actual = calcular_contaminacion(
             zonas[i].nivel_actual[0], zonas[i].nivel_actual[1],
             zonas[i].nivel_actual[2], zonas[i].nivel_actual[3]);
         printf("Contaminación actual en %s: %.2f µg/m³\n", zonas[i].nombre, zonas[i].contaminacion_actual);
     }
 }
+
+
 
 void cargar_datos_desde_archivos(Zona zonas[], int *num_zonas) {
     const char *archivos[] = {"Cumbaya.txt", "Lumbisi.txt", "Valle_de_los_Chillos.txt", "Norte.txt", "Sur.txt"};
@@ -62,10 +63,9 @@ void calcular_promedios(Zona zonas[], int num_zonas, float promedios[]) {
     for (int i = 0; i < num_zonas; i++) {
         float suma = 0.0;
         for (int j = 0; j < DIAS_HISTORICOS; j++) {
-            float contaminacion = calcular_contaminacion(
+            suma += calcular_contaminacion(
                 zonas[i].niveles[j][0], zonas[i].niveles[j][1],
                 zonas[i].niveles[j][2], zonas[i].niveles[j][3]);
-            suma += contaminacion;
         }
         promedios[i] = suma / DIAS_HISTORICOS;
         printf("Promedio de contaminación en %s: %.2f µg/m³\n", zonas[i].nombre, promedios[i]);
@@ -79,10 +79,9 @@ void predecir_niveles(Zona zonas[], int num_zonas, float predicciones[]) {
 
         for (int j = 0; j < DIAS_HISTORICOS; j++) {
             int peso = (j >= DIAS_HISTORICOS - 10) ? 2 : 1;
-            float contaminacion = calcular_contaminacion(
+            suma += calcular_contaminacion(
                 zonas[i].niveles[j][0], zonas[i].niveles[j][1],
-                zonas[i].niveles[j][2], zonas[i].niveles[j][3]);
-            suma += contaminacion * peso;
+                zonas[i].niveles[j][2], zonas[i].niveles[j][3]) * peso;
             pesos += peso;
         }
         predicciones[i] = suma / pesos;
@@ -92,42 +91,78 @@ void predecir_niveles(Zona zonas[], int num_zonas, float predicciones[]) {
 
 void emitir_alertas_y_recomendaciones(Zona zonas[], int num_zonas, float predicciones[]) {
     for (int i = 0; i < num_zonas; i++) {
-        if (predicciones[i] > 37) {
-            printf("ALERTA: Los niveles de contaminación en %s son peligrosos.\n", zonas[i].nombre);
-            printf("Recomendaciones:\n");
-            printf("- Reducir el tráfico vehicular.\n");
-            printf("- Cerrar temporalmente industrias.\n");
-            printf("- Suspender actividades al aire libre.\n");
-        } else {
-            printf("Niveles de contaminación en %s no peligrosos.\n", zonas[i].nombre);
+        printf("\nZona: %s\n", zonas[i].nombre);
+        int alerta = 0;
+
+        // Emitir alertas basadas en niveles actuales
+        for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
+            if (zonas[i].nivel_actual[j] > (j == 0 ? LIMITE_CO2 : j == 1 ? LIMITE_SO2 : j == 2 ? LIMITE_NO2 : LIMITE_PM25)) {
+                alerta = 1;
+                printf("⚠️ Alerta: %s supera el límite permitido.\n",
+                       j == 0 ? "CO2" : j == 1 ? "SO2" : j == 2 ? "NO2" : "PM2.5");
+            }
         }
+
+        // Imprimir recomendaciones
+        if (alerta) {
+            printf("Recomendaciones para %s:\n", zonas[i].nombre);
+            printf("- Evite actividades al aire libre.\n");
+            printf("- Use mascarilla si es necesario.\n");
+            printf("- Monitoree la calidad del aire regularmente.\n");
+        } else {
+            printf("La calidad del aire en %s está dentro de los límites aceptables.\n", zonas[i].nombre);
+        }
+
+        printf("Predicción para los próximos días: %.2f µg/m³\n", predicciones[i]);
     }
 }
 
 void guardar_datos_a_archivo(Zona zonas[], int num_zonas, float promedios[], float predicciones[]) {
-    FILE *fp = fopen("niveles_actualizados.txt", "w");
+    FILE *fp = fopen("niveles_actuales.txt", "w");
     if (fp == NULL) {
-        printf("Error al guardar los datos.\n");
+        printf("Error al crear el archivo niveles_actuales.txt\n");
         return;
     }
 
+    fprintf(fp, "Datos de contaminación actuales, promedios, predicciones y alertas\n");
     for (int i = 0; i < num_zonas; i++) {
-        fprintf(fp, "Zona: %s\n", zonas[i].nombre);
+        fprintf(fp, "\nZona: %s\n", zonas[i].nombre);
         fprintf(fp, "Contaminación actual: %.2f µg/m³\n", zonas[i].contaminacion_actual);
-        fprintf(fp, "Promedio histórico: %.2f µg/m³\n", promedios[i]);
-        fprintf(fp, "Predicción futura: %.2f µg/m³\n", predicciones[i]);
-        if (predicciones[i] > 37) {
-            fprintf(fp, "ALERTA: Niveles peligrosos.\n");
-            fprintf(fp, "Recomendaciones:\n");
-            fprintf(fp, "- Reducir el tráfico vehicular.\n");
-            fprintf(fp, "- Cerrar temporalmente industrias.\n");
-            fprintf(fp, "- Suspender actividades al aire libre.\n");
-        } else {
-            fprintf(fp, "Niveles no peligrosos.\n");
+        fprintf(fp, "Promedio de los últimos 30 días: %.2f µg/m³\n", promedios[i]);
+        fprintf(fp, "Predicción para los próximos días: %.2f µg/m³\n", predicciones[i]);
+
+        int alerta = 0;
+        for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
+            if (zonas[i].nivel_actual[j] > (j == 0 ? LIMITE_CO2 : j == 1 ? LIMITE_SO2 : j == 2 ? LIMITE_NO2 : LIMITE_PM25)) {
+                alerta = 1;
+                fprintf(fp, "⚠️ Alerta: %s supera el límite permitido.\n",
+                        j == 0 ? "CO2" : j == 1 ? "SO2" : j == 2 ? "NO2" : "PM2.5");
+            }
         }
-        fprintf(fp, "\n");
+
+        if (alerta) {
+            fprintf(fp, "Recomendaciones:\n");
+            fprintf(fp, "- Evite actividades al aire libre.\n");
+            fprintf(fp, "- Use mascarilla si es necesario.\n");
+            fprintf(fp, "- Monitoree la calidad del aire regularmente.\n");
+        } else {
+            fprintf(fp, "La calidad del aire está dentro de los límites aceptables.\n");
+        }
     }
 
     fclose(fp);
-    printf("Datos guardados exitosamente en 'niveles_actualizados.txt'\n");
+    printf("Datos guardados en niveles_actuales.txt exitosamente.\n");
+}
+
+void editar_datos_historicos(Zona *zona) {
+    printf("Editando datos históricos de la zona %s\n", zona->nombre);
+    printf("Ingrese los nuevos datos históricos (CO2, SO2, NO2, PM2.5 para cada día):\n");
+
+    for (int i = 0; i < DIAS_HISTORICOS; i++) {
+        printf("Día %d: ", i + 1);
+        for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
+            scanf("%f", &zona->niveles[i][j]);
+        }
+    }
+    printf("Datos históricos actualizados correctamente para la zona %s.\n", zona->nombre);
 }
