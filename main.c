@@ -15,24 +15,24 @@ int main() {
     float predicciones[5];
 
     // Paso 1: Ingresar los niveles actuales de todas las zonas
-    printf("\n*** Ingresar niveles actuales de contaminación ***\n");
+    printf("\n** Ingresar niveles actuales de contaminacion **\n");
     ingresar_niveles_actuales(zonas, num_zonas);
 
     // Paso 2: Seleccionar las zonas de trabajo
-    printf("\n*** Seleccionar zonas para análisis ***\n");
+    printf("\n** Seleccionar zonas para analisis **\n");
     cargar_datos_desde_archivos(zonas, &num_zonas);
 
     // Menú de opciones
     int opcion;
     do {
-        printf("\n*** Menú de Opciones ***\n");
-        printf("1. Calcular promedios de contaminación\n");
-        printf("2. Predecir niveles de contaminación\n");
+        printf("\n** Menu de Opciones **\n");
+        printf("1. Calcular promedios de contaminacion\n");
+        printf("2. Predecir niveles de contaminacion\n");
         printf("3. Emitir alertas y recomendaciones\n");
         printf("4. Guardar datos en archivo\n");
-        printf("5. Editar datos históricos\n");
+        printf("5. Editar datos historicos\n");
         printf("6. Salir\n");
-        printf("Seleccione una opción: ");
+        printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
@@ -55,7 +55,7 @@ int main() {
                 if (zona_seleccionada >= 1 && zona_seleccionada <= num_zonas) {
                     editar_datos_historicos(&zonas[zona_seleccionada - 1]);
                 } else {
-                    printf("Zona no válida.\n");
+                    printf("Zona no valida.\n");
                 }
                 break;
             }
@@ -63,7 +63,7 @@ int main() {
                 printf("Saliendo del programa.\n");
                 break;
             default:
-                printf("Opción inválida.\n");
+                printf("Opcion invalida.\n");
         }
     } while (opcion != 6);
 

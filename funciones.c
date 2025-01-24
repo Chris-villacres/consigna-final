@@ -10,14 +10,14 @@ float calcular_contaminacion(float co2, float so2, float no2, float pm25) {
 void ingresar_niveles_actuales(Zona zonas[], int num_zonas) {
     for (int i = 0; i < num_zonas; i++) {
         printf("\nZona: %s\n", zonas[i].nombre); // Imprime el nombre de la zona.
-        printf("Ingrese los niveles actuales de contaminación (CO2, SO2, NO2, PM2.5): ");
+        printf("Ingrese los niveles actuales de contaminacion (CO2, SO2, NO2, PM2.5): ");
         for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
             scanf("%f", &zonas[i].nivel_actual[j]);
         }
         zonas[i].contaminacion_actual = calcular_contaminacion(
             zonas[i].nivel_actual[0], zonas[i].nivel_actual[1],
             zonas[i].nivel_actual[2], zonas[i].nivel_actual[3]);
-        printf("Contaminación actual en %s: %.2f µg/m³\n", zonas[i].nombre, zonas[i].contaminacion_actual);
+        printf("Contaminacion actual en %s: %.2f µg/m³\n", zonas[i].nombre, zonas[i].contaminacion_actual);
     }
 }
 
@@ -33,11 +33,11 @@ void cargar_datos_desde_archivos(Zona zonas[], int *num_zonas) {
         printf("%d. %s\n", i + 1, nombres[i]);
     }
 
-    printf("Ingrese el número de zonas que desea analizar (máximo 5): ");
+    printf("Ingrese el numero de zonas que desea analizar (maximo 5): ");
     scanf("%d", num_zonas);
     if (*num_zonas > 5) *num_zonas = 5;
 
-    printf("Seleccione las zonas a analizar ingresando sus números separados por espacios (termine con -1):\n");
+    printf("Seleccione las zonas a analizar ingresando sus numeros separados por espacios (termine con -1):\n");
     for (int i = 0; i < *num_zonas; i++) {
         scanf("%d", &seleccion[i]);
         seleccion[i]--;
@@ -68,7 +68,7 @@ void calcular_promedios(Zona zonas[], int num_zonas, float promedios[]) {
                 zonas[i].niveles[j][2], zonas[i].niveles[j][3]);
         }
         promedios[i] = suma / DIAS_HISTORICOS;
-        printf("Promedio de contaminación en %s: %.2f µg/m³\n", zonas[i].nombre, promedios[i]);
+        printf("Promedio de contaminacion en %s: %.2f µg/m³\n", zonas[i].nombre, promedios[i]);
     }
 }
 
@@ -85,7 +85,7 @@ void predecir_niveles(Zona zonas[], int num_zonas, float predicciones[]) {
             pesos += peso;
         }
         predicciones[i] = suma / pesos;
-        printf("Predicción de contaminación en %s: %.2f µg/m³\n", zonas[i].nombre, predicciones[i]);
+        printf("Prediccion de contaminacion en %s: %.2f µg/m³\n", zonas[i].nombre, predicciones[i]);
     }
 }
 
@@ -98,7 +98,7 @@ void emitir_alertas_y_recomendaciones(Zona zonas[], int num_zonas, float predicc
         for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
             if (zonas[i].nivel_actual[j] > (j == 0 ? LIMITE_CO2 : j == 1 ? LIMITE_SO2 : j == 2 ? LIMITE_NO2 : LIMITE_PM25)) {
                 alerta = 1;
-                printf("⚠️ Alerta: %s supera el límite permitido.\n",
+                printf("⚠️ Alerta: %s supera el limite permitido.\n",
                        j == 0 ? "CO2" : j == 1 ? "SO2" : j == 2 ? "NO2" : "PM2.5");
             }
         }
@@ -110,10 +110,10 @@ void emitir_alertas_y_recomendaciones(Zona zonas[], int num_zonas, float predicc
             printf("- Use mascarilla si es necesario.\n");
             printf("- Monitoree la calidad del aire regularmente.\n");
         } else {
-            printf("La calidad del aire en %s está dentro de los límites aceptables.\n", zonas[i].nombre);
+            printf("La calidad del aire en %s esta dentro de los limites aceptables.\n", zonas[i].nombre);
         }
 
-        printf("Predicción para los próximos días: %.2f µg/m³\n", predicciones[i]);
+        printf("Prediccion para los proximos dias: %.2f µg/m³\n", predicciones[i]);
     }
 }
 
@@ -124,18 +124,18 @@ void guardar_datos_a_archivo(Zona zonas[], int num_zonas, float promedios[], flo
         return;
     }
 
-    fprintf(fp, "Datos de contaminación actuales, promedios, predicciones y alertas\n");
+    fprintf(fp, "Datos de contaminacion actuales, promedios, predicciones y alertas\n");
     for (int i = 0; i < num_zonas; i++) {
         fprintf(fp, "\nZona: %s\n", zonas[i].nombre);
-        fprintf(fp, "Contaminación actual: %.2f µg/m³\n", zonas[i].contaminacion_actual);
-        fprintf(fp, "Promedio de los últimos 30 días: %.2f µg/m³\n", promedios[i]);
-        fprintf(fp, "Predicción para los próximos días: %.2f µg/m³\n", predicciones[i]);
+        fprintf(fp, "Contaminacion actual: %.2f µg/m³\n", zonas[i].contaminacion_actual);
+        fprintf(fp, "Promedio de los ultimos 30 dias: %.2f µg/m³\n", promedios[i]);
+        fprintf(fp, "Prediccion para los proximos dias: %.2f µg/m³\n", predicciones[i]);
 
         int alerta = 0;
         for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
             if (zonas[i].nivel_actual[j] > (j == 0 ? LIMITE_CO2 : j == 1 ? LIMITE_SO2 : j == 2 ? LIMITE_NO2 : LIMITE_PM25)) {
                 alerta = 1;
-                fprintf(fp, "⚠️ Alerta: %s supera el límite permitido.\n",
+                fprintf(fp, "⚠️ Alerta: %s supera el limite permitido.\n",
                         j == 0 ? "CO2" : j == 1 ? "SO2" : j == 2 ? "NO2" : "PM2.5");
             }
         }
@@ -146,7 +146,7 @@ void guardar_datos_a_archivo(Zona zonas[], int num_zonas, float promedios[], flo
             fprintf(fp, "- Use mascarilla si es necesario.\n");
             fprintf(fp, "- Monitoree la calidad del aire regularmente.\n");
         } else {
-            fprintf(fp, "La calidad del aire está dentro de los límites aceptables.\n");
+            fprintf(fp, "La calidad del aire está dentro de los limites aceptables.\n");
         }
     }
 
@@ -155,8 +155,8 @@ void guardar_datos_a_archivo(Zona zonas[], int num_zonas, float promedios[], flo
 }
 
 void editar_datos_historicos(Zona *zona) {
-    printf("Editando datos históricos de la zona %s\n", zona->nombre);
-    printf("Ingrese los nuevos datos históricos (CO2, SO2, NO2, PM2.5 para cada día):\n");
+    printf("Editando datos historicos de la zona %s\n", zona->nombre);
+    printf("Ingrese los nuevos datos historicos (CO2, SO2, NO2, PM2.5 para cada dia):\n");
 
     for (int i = 0; i < DIAS_HISTORICOS; i++) {
         printf("Día %d: ", i + 1);
@@ -164,5 +164,5 @@ void editar_datos_historicos(Zona *zona) {
             scanf("%f", &zona->niveles[i][j]);
         }
     }
-    printf("Datos históricos actualizados correctamente para la zona %s.\n", zona->nombre);
+    printf("Datos historicos actualizados correctamente para la zona %s.\n", zona->nombre);
 }
