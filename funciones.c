@@ -9,7 +9,7 @@ float calcular_contaminacion(float co2, float so2, float no2, float pm25) {
 
 void ingresar_niveles_actuales(Zona zonas[], int num_zonas) {
     for (int i = 0; i < num_zonas; i++) {
-        printf("\nZona: %s\n", zonas[i].nombre); // Imprime el nombre de la zona.
+        printf("\nZona: %s\n", zonas[i].nombre); 
         printf("Ingrese los niveles actuales de contaminacion (CO2, SO2, NO2, PM2.5): ");
         for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
             scanf("%f", &zonas[i].nivel_actual[j]);
@@ -94,7 +94,7 @@ void emitir_alertas_y_recomendaciones(Zona zonas[], int num_zonas, float predicc
         printf("\nZona: %s\n", zonas[i].nombre);
         int alerta = 0;
 
-        // Emitir alertas basadas en niveles actuales
+       
         for (int j = 0; j < PARAMETROS_CONTAMINACION; j++) {
             if (zonas[i].nivel_actual[j] > (j == 0 ? LIMITE_CO2 : j == 1 ? LIMITE_SO2 : j == 2 ? LIMITE_NO2 : LIMITE_PM25)) {
                 alerta = 1;
@@ -103,7 +103,7 @@ void emitir_alertas_y_recomendaciones(Zona zonas[], int num_zonas, float predicc
             }
         }
 
-        // Imprimir recomendaciones
+        
         if (alerta) {
             printf("Recomendaciones para %s:\n", zonas[i].nombre);
             printf("- Evite actividades al aire libre.\n");

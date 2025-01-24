@@ -2,7 +2,7 @@
 #include "funciones.h"
 
 int main() {
-    int num_zonas = 5; // Inicializamos con 5 zonas disponibles.
+    int num_zonas = 5; 
     Zona zonas[5] = {
         {"Cumbaya"},
         {"Lumbisi"},
@@ -14,15 +14,15 @@ int main() {
     float promedios[5];
     float predicciones[5];
 
-    // Paso 1: Ingresar los niveles actuales de todas las zonas
+    
     printf("\n** Ingresar niveles actuales de contaminacion **\n");
     ingresar_niveles_actuales(zonas, num_zonas);
 
-    // Paso 2: Seleccionar las zonas de trabajo
+   
     printf("\n** Seleccionar zonas para analisis **\n");
     cargar_datos_desde_archivos(zonas, &num_zonas);
 
-    // Menú de opciones
+   
     int opcion;
     do {
         printf("\n** Menu de Opciones **\n");
